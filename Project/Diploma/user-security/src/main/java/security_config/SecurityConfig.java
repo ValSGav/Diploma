@@ -5,12 +5,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -20,13 +16,17 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests( (authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers( "/**" )
+                                .requestMatchers("/register" )
+                                .not()
+                                .fullyAuthenticated()
+                                .requestMatchers( "/login" )
                                 .permitAll()
                                 //.hasRole("USER")
                                 .anyRequest()
                                 .authenticated()
                 )
-                .formLogin( withDefaults() );
+                .formLogin( httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
+                        .loginPage( "login.html" ) );
         http.headers( headers -> headers
                 .frameOptions( HeadersConfigurer.FrameOptionsConfig::sameOrigin ) );
         return http.build();
