@@ -1,11 +1,11 @@
-package service;
+package ru.gb.service;
 
-import api.User;
+import ru.gb.api.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import repository.UserRepository;
+import ru.gb.repository.UserRepository;
 
 import java.util.ArrayList;
 

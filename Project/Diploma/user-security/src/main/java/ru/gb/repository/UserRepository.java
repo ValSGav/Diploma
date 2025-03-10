@@ -1,6 +1,6 @@
-package repository;
+package ru.gb.repository;
 
-import api.User;
+import ru.gb.api.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

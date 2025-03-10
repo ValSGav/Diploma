@@ -1,11 +1,11 @@
-package service;
+package ru.gb.service;
 
 
-import api.User;
+import ru.gb.api.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import repository.UserRepository;
+import ru.gb.repository.UserRepository;
 
 @Service
 public class UserService {
