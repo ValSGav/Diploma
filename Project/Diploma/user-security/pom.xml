@@ -8,6 +8,7 @@
         <artifactId>Diploma</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+    <packaging>jar</packaging>
 
     <artifactId>user-security</artifactId>
 
