@@ -1,14 +1,13 @@
 package ru.gb.api;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 
 import lombok.Data;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -22,4 +21,27 @@ public class User {
     private String username;
     @Column(name = "password")
     private String password;
+    @Column(name = "email")
+    private String email;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles = new HashSet<>();
+
+    // доп. поля
+    @OneToMany(mappedBy = "client")
+    private List<PhotoSession> photoSessionsAsClient;
+
+    @OneToMany(mappedBy = "photographer")
+    private List<PhotoSession> photoSessionsAsPhotographer;
+
+    // геттеры, сеттеры, конструкторы
+
+
+    public enum Role {
+        CLIENT,
+        PHOTOGRAPHER,
+        ADMIN
+    }
 }
