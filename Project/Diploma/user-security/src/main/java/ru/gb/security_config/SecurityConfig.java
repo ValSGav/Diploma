@@ -15,11 +15,20 @@ import ru.gb.service.UserDetailsService;
 
 @EnableWebSecurity
 @Configuration
-@EnableGlobalAuthentication()
+//@EnableGlobalAuthentication()
 public class SecurityConfig {
 
-    @Autowired
-    UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsService;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    public SecurityConfig(UserDetailsService uds) {
+        this.userDetailsService = uds;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -27,6 +36,8 @@ public class SecurityConfig {
                         authorize
                                 .requestMatchers("/register").permitAll()
                                 .requestMatchers("/login").permitAll()
+                                .requestMatchers("/photographer/**").hasRole("PHOTOGRAPHER")
+                                .requestMatchers("/client/**").hasRole("CLIENT")
                                 .anyRequest().authenticated()
                 )
                 .formLogin(httpSecurityFormLoginConfigurer ->
@@ -37,9 +48,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
 
 }
