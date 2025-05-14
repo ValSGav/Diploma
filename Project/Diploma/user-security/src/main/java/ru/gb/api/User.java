@@ -25,7 +25,7 @@ public class User {
     @NotBlank(message = "Пароль не может быть пустым")
     @Column(name = "password")
     private String password;
-    @Email(message = "Неверный формат почты")
+    @Email(message = "Не верный формат почты")
     @Column(name = "email")
     private String email;
 
@@ -41,10 +41,7 @@ public class User {
     @OneToMany(mappedBy = "photographer")
     private List<PhotoSession> photoSessionsAsPhotographer;
 
-    // геттеры, сеттеры, конструкторы
-
-
-    public enum Role {
-        CLIENT, PHOTOGRAPHER, ADMIN
+    private void setRole(Role role){
+        roles.add( role );
     }
 }
