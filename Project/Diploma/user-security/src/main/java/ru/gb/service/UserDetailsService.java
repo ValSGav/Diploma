@@ -23,7 +23,7 @@ public class UserDetailsService implements org.springframework.security.core.use
             throw new UsernameNotFoundException( String.format( "User with name %s not found", username ) );
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername()
-                , user.getPassword()
-                , new ArrayList<>() );
+                , user.getPassword(),
+                new ArrayList<>());
     }
 }

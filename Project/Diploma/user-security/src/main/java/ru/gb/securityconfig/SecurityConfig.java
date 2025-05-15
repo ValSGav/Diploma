@@ -40,7 +40,7 @@ public class SecurityConfig {
                 )
                 .formLogin(httpSecurityFormLoginConfigurer ->
                         httpSecurityFormLoginConfigurer
-                                .loginPage("/login")
+                                //.loginPage("/login")
                                 .permitAll()
                 ).userDetailsService( userDetailsService );
         return http.build();

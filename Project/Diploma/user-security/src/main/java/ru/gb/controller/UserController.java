@@ -18,16 +18,16 @@ import java.util.*;
 public class UserController {
     private UserService userService;
 
-    @GetMapping("/login")
-    public String login() {
-        return "login"; // Страница login.html
-    }
+    // @GetMapping("/login")
+    //public String login() {
+    //    return "login"; // Страница login.html
+    //}
 
-    @GetMapping("/register")
-    public String register(Model model) {
-        model.addAttribute( "user", new User() );
-        return "register"; // Страница register.html
-    }
+    // @GetMapping("/register")
+    //  public String register(Model model) {
+    //      model.addAttribute( "user", new User() );
+    //      return "register"; // Страница register.html
+    //  }
 
     public UserController(UserService userService) {
         this.userService = userService;

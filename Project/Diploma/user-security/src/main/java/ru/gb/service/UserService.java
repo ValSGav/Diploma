@@ -1,6 +1,7 @@
 package ru.gb.service;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.gb.api.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,14 +15,18 @@ import java.util.NoSuchElementException;
 @Service
 
 public class UserService {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+//    private final UserRepository userRepository;
+//    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+//    public UserService(UserRepository userRepository,
+//                       PasswordEncoder passwordEncoder) {
+//        this.userRepository = userRepository;
+//        this.passwordEncoder = passwordEncoder;
+//    }
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public User createUser(User user) {
         if ( userRepository.findByUsername( user.getUsername() ).isPresent() ) {
