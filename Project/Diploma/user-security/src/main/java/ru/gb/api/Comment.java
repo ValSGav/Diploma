@@ -16,7 +16,7 @@ public class Comment {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private File file;
+    private FileEntity fileEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Album album;

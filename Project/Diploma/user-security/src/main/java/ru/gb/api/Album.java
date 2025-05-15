@@ -17,5 +17,5 @@ public class Album {
     private User owner;
 
     @OneToMany(mappedBy = "album", cascade = CascadeType.ALL)
-    private List<File> files = new ArrayList<>();
+    private List<FileEntity> fileEntities = new ArrayList<>();
 }

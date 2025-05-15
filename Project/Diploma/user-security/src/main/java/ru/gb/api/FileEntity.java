@@ -1,14 +1,18 @@
 package ru.gb.api;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
-public class File {
+@Data
+public class FileEntity {
     @Id
     @GeneratedValue
     private Long id;
 
     private String filename;
+
+    private String filepath; // локальный путь на диске
 
     private String url;
 
@@ -17,6 +21,4 @@ public class File {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Album album;
-
-    // геттеры/сеттеры
 }
