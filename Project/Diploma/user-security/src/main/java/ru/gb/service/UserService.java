@@ -2,12 +2,14 @@ package ru.gb.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import ru.gb.api.Role;
 import ru.gb.api.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.gb.repository.UserRepository;
 
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.NoSuchElementException;
@@ -36,6 +38,9 @@ public class UserService {
             throw new IllegalArgumentException( "Пользователь с таким email уже существует" );
         }
         user.setPassword( passwordEncoder.encode( user.getPassword() ) );
+        HashSet<Role> rolesUser = new HashSet<>();
+        rolesUser.add( Role.CLIENT );
+        user.setRoles( rolesUser);
 
         return userRepository.save( user );
     }
