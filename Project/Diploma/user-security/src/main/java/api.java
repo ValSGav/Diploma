@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories(basePackages = "ru.gb.repository")
 @ComponentScan(basePackages = "ru.gb.*")
 @EntityScan(basePackages = "ru.gb.api")
-public class demo {
+public class api {
     public static void main(String[] args) {
-        SpringApplication.run( demo.class, args );
+        SpringApplication.run( api.class, args );
 
     }
 

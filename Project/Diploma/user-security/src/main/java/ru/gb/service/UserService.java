@@ -1,36 +1,34 @@
 package ru.gb.service;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
-import ru.gb.api.Role;
-import ru.gb.api.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.gb.api.Role;
+import ru.gb.api.RoleEnum;
+import ru.gb.api.User;
+import ru.gb.dto.UserRegistrationRequest;
 import ru.gb.repository.UserRepository;
+import ru.gb.userexception.UsernameExistsException;
 
-
+import javax.management.relation.RoleNotFoundException;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
-
 public class UserService {
-//    private final UserRepository userRepository;
-//    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final RoleService roleService;
 
-//    public UserService(UserRepository userRepository,
-//                       PasswordEncoder passwordEncoder) {
-//        this.userRepository = userRepository;
-//        this.passwordEncoder = passwordEncoder;
-//    }
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleService roleService) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.roleService = roleService;
+    }
 
-    public User createUser(User user) {
+    public User createUser(User user) throws RoleNotFoundException {
         if ( userRepository.findByUsername( user.getUsername() ).isPresent() ) {
             throw new IllegalArgumentException( "Пользователь с таким именем уже существует" );
         }
@@ -39,10 +37,25 @@ public class UserService {
         }
         user.setPassword( passwordEncoder.encode( user.getPassword() ) );
         HashSet<Role> rolesUser = new HashSet<>();
-        rolesUser.add( Role.CLIENT );
+        rolesUser.add( roleService.getRoleByName( RoleEnum.ROLE_USER ));
         user.setRoles( rolesUser);
 
         return userRepository.save( user );
+    }
+
+    public User registerUser(UserRegistrationRequest registrationDto) throws RoleNotFoundException {
+        if (userRepository.existsByUsername(registrationDto.getUsername())) {
+            throw new UsernameExistsException("Username '" + registrationDto.getUsername() + "' already exists");
+        }
+
+        User user = new User();
+        user.setUsername(registrationDto.getUsername());
+        user.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+
+        Role defaultRole = roleService.getRoleByName(RoleEnum.ROLE_USER);
+        user.getRoles().add(defaultRole);
+
+        return userRepository.save(user);
     }
 
     public Optional<User> getUserById(Long id) {

@@ -10,8 +10,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>user-security</module>
-        <module>user_properties</module>
-        <module>file-service</module>
     </modules>
 
     <properties>

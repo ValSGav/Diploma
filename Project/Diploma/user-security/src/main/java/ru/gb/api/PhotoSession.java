@@ -19,9 +19,11 @@ public class PhotoSession {
     @ManyToOne(fetch = FetchType.LAZY)
     private User client;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private CalendarUnit calendarUnit;
-
     @OneToMany(mappedBy = "photoSession", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "photoSession", cascade = CascadeType.ALL)
+    private List<FileEntity> fileEntities = new ArrayList<>();
+
+
 }

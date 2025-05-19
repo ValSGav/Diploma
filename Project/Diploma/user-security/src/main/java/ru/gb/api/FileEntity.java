@@ -3,6 +3,9 @@ package ru.gb.api;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 public class FileEntity {
@@ -21,4 +24,11 @@ public class FileEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Album album;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private PhotoSession photoSession;
+
+    @OneToMany(mappedBy = "fileEntity", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
+
 }

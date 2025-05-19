@@ -1,17 +1,13 @@
 package ru.gb.service;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Service;
-import ru.gb.api.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import ru.gb.api.User;
 import ru.gb.repository.UserRepository;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 
@@ -22,19 +18,16 @@ public class UserDetailsService implements org.springframework.security.core.use
     UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername( username ).orElse( null );
-        if ( user == null )
-            throw new UsernameNotFoundException( String.format( "User with name %s not found", username ) );
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername()
-                , user.getPassword()
-                , getAuthorities(user));
-    }
+    public UserDetails loadUserByUsername(String username) {
+        User user = userRepository.findByUsername( username )
+                .orElseThrow( () -> new UsernameNotFoundException( username ) );
 
-    private Collection<? extends GrantedAuthority> getAuthorities(User user) {
-        return user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toString()))
-                .collect(Collectors.toList());
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                user.getRoles().stream()
+                        .map( role -> new SimpleGrantedAuthority( role.getName().toString() ))
+                        .collect( Collectors.toList() )
+        );
     }
 }

@@ -4,44 +4,27 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.gb.api.Role;
 import ru.gb.api.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import ru.gb.dto.UserRegistrationRequest;
 import ru.gb.service.UserService;
 
-import java.util.*;
+import javax.management.relation.RoleNotFoundException;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
     private UserService userService;
 
-    // @GetMapping("/login")
-    //public String login() {
-    //    return "login"; // Страница login.html
-    //}
-
-    // @GetMapping("/register")
-    //  public String register(Model model) {
-    //      model.addAttribute( "user", new User() );
-    //      return "register"; // Страница register.html
-    //  }
-
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
-        try {
-            User createdUser = userService.createUser( user );
-            createdUser.setRoles( Set.of( Role.CLIENT ) );
-            return ResponseEntity.status( HttpStatus.CREATED ).body( createdUser );
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body( Map.of( "error", e.getMessage() ) );
-        }
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UserRegistrationRequest user) throws RoleNotFoundException {
+        return ResponseEntity.ok(userService.registerUser(user));
     }
 
     @GetMapping("/{id}")

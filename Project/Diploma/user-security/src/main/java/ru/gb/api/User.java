@@ -39,6 +39,11 @@ public class User {
     @OneToMany(mappedBy = "photographer")
     private List<PhotoSession> photoSessionsAsPhotographer;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    private CalendarUnit calendarUnit;
+
+
+
     private void setRole(Role role){
         roles.add( role );
     }

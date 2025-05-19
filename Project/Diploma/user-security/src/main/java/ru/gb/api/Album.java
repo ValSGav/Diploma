@@ -18,4 +18,8 @@ public class Album {
 
     @OneToMany(mappedBy = "album", cascade = CascadeType.ALL)
     private List<FileEntity> fileEntities = new ArrayList<>();
+
+    @OneToMany(mappedBy = "album", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
+
 }

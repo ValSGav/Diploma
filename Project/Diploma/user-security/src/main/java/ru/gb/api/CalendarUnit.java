@@ -13,11 +13,12 @@ public class CalendarUnit {
 
     private LocalDate date;
 
+    @Column(name = "hour_column")
     private Integer hour; // 0-23
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Calendar calendar;
 
     @OneToOne(mappedBy = "calendarUnit")
-    private PhotoSession photoSession;
+    private User client;
 }
