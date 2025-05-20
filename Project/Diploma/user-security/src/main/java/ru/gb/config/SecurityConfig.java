@@ -1,30 +1,28 @@
 package ru.gb.config;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import ru.gb.service.UserDetailsService;
-
 
 @EnableWebSecurity
 @Configuration
 //@EnableGlobalAuthentication()
 public class SecurityConfig {
-
-    private final UserDetailsService userDetailsService;
-
+//
+  @Autowired
+    private UserDetailsService userDetailsService;
+//
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    public SecurityConfig(UserDetailsService uds) {
-        this.userDetailsService = uds;
     }
 
     @Bean
@@ -32,20 +30,26 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers("/register").permitAll()
-                                .requestMatchers("/login").permitAll()
-                                .requestMatchers("/photographer/**").hasRole("PHOTOGRAPHER")
-                                .requestMatchers("/client/**").hasRole("CLIENT")
-                                .anyRequest().authenticated()
-                )
-                .formLogin(httpSecurityFormLoginConfigurer ->
-                        httpSecurityFormLoginConfigurer
-                                //.loginPage("/login")
-                                .permitAll()
-                ).userDetailsService( userDetailsService );
+                                .requestMatchers("api/users/register/").permitAll()
+                                //.requestMatchers("api/users/login").permitAll()
+                                .anyRequest().permitAll()
+                                //.requestMatchers("api/users/photographer/**").hasRole("PHOTOGRAPHER")
+                               // .requestMatchers("api/users/client/**").hasRole("CLIENT")
+                                //.anyRequest().authenticated()
+                )  .csrf(csrf -> csrf.disable())
+                .httpBasic( Customizer.withDefaults());;
+//                .formLogin(httpSecurityFormLoginConfigurer ->
+//                        httpSecurityFormLoginConfigurer
+//                                //.loginPage("/login")
+//                                .permitAll()
+//
+//                )
+        //.userDetailsService( userDetailsService );
         return http.build();
     }
 
 
+
+//}
 
 }

@@ -1,6 +1,8 @@
 package ru.gb.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,33 +16,32 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/api/users")
+//@RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
+
+    @Autowired
     private UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
-
-    @PostMapping("/register")
+    @PostMapping("/api/users/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody UserRegistrationRequest user) throws RoleNotFoundException {
         return ResponseEntity.ok(userService.registerUser(user));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getUser(@PathVariable Long id) {
+    @GetMapping("/api/users/{id}")
+    public ResponseEntity<?> getUser(@PathVariable long id) {
         User user = userService.getUserById( id ).orElse( null );
         if ( user != null )
             return ResponseEntity.ok( user );
         else return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( Map.of( "error", "Пользователь не найден" ) );
     }
 
-    @GetMapping
+    @GetMapping("/api/users")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok( userService.getAllUsers() );
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/api/users/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
         try {
             User updatedUser = userService.updateUser( id, user );
@@ -50,7 +51,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/api/users/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         userService.deleteUser( id );
         return ResponseEntity.noContent().build();
