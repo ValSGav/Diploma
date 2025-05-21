@@ -27,7 +27,7 @@ public class UserService {
     }
 
     public User createUser(User user) throws RoleNotFoundException {
-        if ( userRepository.findByUsername( user.getUsername() ).isPresent() ) {
+        if ( userRepository.findByLogin( user.getLogin() ).isPresent() ) {
             throw new IllegalArgumentException( "Пользователь с таким именем уже существует" );
         }
         if ( userRepository.findByEmail( user.getEmail() ).isPresent() ) {
@@ -42,12 +42,12 @@ public class UserService {
     }
 
     public User registerUser(UserRegistrationRequest registrationDto) throws RoleNotFoundException {
-        if (userRepository.existsByUsername(registrationDto.getUsername())) {
-            throw new UsernameExistsException("Username '" + registrationDto.getUsername() + "' already exists");
+        if (userRepository.existsByLogin(registrationDto.getLogin())) {
+            throw new UsernameExistsException("Username '" + registrationDto.getLogin() + "' already exists");
         }
 
         User user = new User();
-        user.setUsername( registrationDto.getUsername());
+        user.setLogin( registrationDto.getLogin());
         user.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
         user.getRoles().add(Role.USER);
 
@@ -59,10 +59,10 @@ public class UserService {
     }
 
     public Optional<User> getUserByName(String name) {
-        return userRepository.findByUsername( name );
+        return userRepository.findByLogin( name );
     }
 
-    public Optional<User> getByLogin(String name){ return userRepository.findByUsername( name );}
+    public Optional<User> getByLogin(String name){ return userRepository.findByLogin( name );}
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -72,7 +72,7 @@ public class UserService {
         return userRepository.findById( id )
                 .map( user -> {
                     user.setEmail( updatedUser.getEmail() );
-                    user.setUsername( updatedUser.getUsername());
+                    user.setLogin( updatedUser.getLogin());
                     if ( updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty() ) {
                         user.setPassword( passwordEncoder.encode( updatedUser.getPassword() ) );
                     }

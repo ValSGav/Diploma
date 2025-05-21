@@ -7,15 +7,15 @@ import ru.gb.api.Role;
 
 
 public record UserRegistrationRequest(
-        @NotBlank String username,
+        @NotBlank String login,
         @NotBlank @Email String email,
         @NotBlank @Size(min = 8) String password,
         @NotBlank String firstName,
         @NotBlank String lastName,
-        Role role) {
+        String role) {
 
-    public String getUsername() {
-        return username;
+    public String getLogin() {
+        return login;
     }
 
     public CharSequence getPassword() {

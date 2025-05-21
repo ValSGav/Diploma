@@ -3,13 +3,15 @@ package ru.gb.jwt;
 import io.jsonwebtoken.Claims;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
 import ru.gb.api.Role;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
+@Service
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class JwtUtils {
 

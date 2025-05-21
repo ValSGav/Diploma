@@ -19,11 +19,11 @@ public class UserDetailsService implements org.springframework.security.core.use
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        User user = userRepository.findByUsername( username )
+        User user = userRepository.findByLogin( username )
                 .orElseThrow( () -> new UsernameNotFoundException( username ) );
 
         return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
+                user.getLogin(),
                 user.getPassword(),
                 user.getRoles().stream()
                         .map( role -> new SimpleGrantedAuthority( role.toString() ))

@@ -1,5 +1,6 @@
 package ru.gb.controller;
 
+import jakarta.security.auth.message.AuthException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 import ru.gb.api.User;
+import ru.gb.dto.JwtRequest;
+import ru.gb.dto.JwtResponse;
 import ru.gb.dto.UserRegistrationRequest;
 import ru.gb.jwt.JwtUtils;
+import ru.gb.service.AuthService;
 import ru.gb.service.UserService;
 
 import javax.management.relation.RoleNotFoundException;
@@ -26,7 +30,10 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
     @Autowired
+    private AuthService authService;
+
     private AuthenticationManager authenticationManager;
     @Autowired
     private JwtUtils jwtUtil;
@@ -36,8 +43,11 @@ public class UserController {
         return ResponseEntity.ok(userService.registerUser(user));
     }
 
-
-
+    @PostMapping("/api/auth/login")
+    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest authRequest) throws AuthException {
+        final JwtResponse token = authService.login(authRequest);
+        return ResponseEntity.ok(token);
+    }
 
     @GetMapping("/api/users/{id}")
     public ResponseEntity<?> getUser(@PathVariable long id) {

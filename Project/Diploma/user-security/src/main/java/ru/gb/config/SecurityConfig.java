@@ -1,6 +1,9 @@
 package ru.gb.config;
 
 
+import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +21,8 @@ import ru.gb.service.UserDetailsService;
 @EnableWebSecurity
 
 public class SecurityConfig {
+
+    private Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
     @Autowired
     private UserDetailsService userService;
     @Autowired
@@ -28,17 +33,27 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
                 .httpBasic(hb -> hb.disable())
                 .csrf(cf -> cf.disable())
-                .sessionManagement( sm -> sm.sessionCreationPolicy( SessionCreationPolicy.STATELESS ))
                 .authorizeHttpRequests(authorize ->
                         authorize
                                 .requestMatchers("/api/auth/**").permitAll()
-                                .anyRequest().authenticated()
+                                .requestMatchers("/api/users/register").permitAll()
+                                .anyRequest().permitAll()
                 )
-                .addFilterAfter( jwtFilter, UsernamePasswordAuthenticationFilter.class );
-
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(eh -> eh
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            logger.error("Ошибка аутентификации: {}", authException.getMessage());
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                        }));
+        http.headers(h -> h.frameOptions(fo -> fo.disable())); // если используете H2 консоль
+        http.exceptionHandling(eh -> eh.authenticationEntryPoint((request, response, authException) -> {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+        }));
         return http.build();
     }
 
@@ -49,4 +64,6 @@ public class SecurityConfig {
         authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
+
+
 }

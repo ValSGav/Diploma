@@ -1,13 +1,14 @@
 package ru.gb.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Setter
-@Getter
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class JwtRequest {
-
     private String login;
     private String password;
-
 }
