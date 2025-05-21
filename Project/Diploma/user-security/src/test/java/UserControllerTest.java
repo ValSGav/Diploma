@@ -7,10 +7,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.gb.api.RoleEnum;
+import ru.gb.api.Role;
 import ru.gb.controller.UserController;
 import ru.gb.dto.UserRegistrationRequest;
-import ru.gb.service.RoleService;
 import ru.gb.service.UserService;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -24,8 +23,7 @@ public class UserControllerTest {
 
     @MockitoBean
     private UserService userService;
-    @MockitoBean
-    private RoleService roleService;
+
 
     @Test
     public void registerUser_ValidRequest_ReturnsCreated() throws Exception {
@@ -35,7 +33,7 @@ public class UserControllerTest {
                 "Password123!",
                 "John",
                 "Doe",
-                roleService.getRoleByName( RoleEnum.ROLE_USER )
+                Role.USER
         );
 
         mockMvc.perform(post("/api/users/register")

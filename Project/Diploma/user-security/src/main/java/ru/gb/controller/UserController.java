@@ -5,15 +5,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 import ru.gb.api.User;
 import ru.gb.dto.UserRegistrationRequest;
+import ru.gb.jwt.JwtUtils;
 import ru.gb.service.UserService;
 
 import javax.management.relation.RoleNotFoundException;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+
+
 
 @RestController
 //@RequestMapping("/api/users")
@@ -22,11 +26,18 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtUtils jwtUtil;
 
     @PostMapping("/api/users/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody UserRegistrationRequest user) throws RoleNotFoundException {
         return ResponseEntity.ok(userService.registerUser(user));
     }
+
+
+
 
     @GetMapping("/api/users/{id}")
     public ResponseEntity<?> getUser(@PathVariable long id) {

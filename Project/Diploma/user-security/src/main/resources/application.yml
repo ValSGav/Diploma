@@ -1,6 +1,6 @@
 spring:
   application:
-    name: book-service
+    name: photographer-service
   datasource:
     url: jdbc:h2:mem:test
     username: sa
@@ -11,6 +11,10 @@ spring:
       ddl-auto: update
       show-sql: true
       format_sql: true
-
 server:
   port: 8761
+jwt:
+  secret:
+    access: cmVmcmVzaGtleWp4dHltY3RyaHRueXNxYnlicmp2ZXl0YnBkdGNuZHlzcQ==
+    refresh: cmVmcmVzaGtleWp4dHltY3RyaHRueXNxYnlicmp2ZXl0YnBkdGNuZHlzcQ==
+  expiration: 3600000

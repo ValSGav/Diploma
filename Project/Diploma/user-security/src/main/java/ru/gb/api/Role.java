@@ -1,25 +1,20 @@
 package ru.gb.api;
 
-import jakarta.persistence.*;
-import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Set;
+@RequiredArgsConstructor
+public enum Role implements GrantedAuthority {
 
-@Entity
-@Table(name = "roles")
-@Data
-public class Role{
+    ADMIN("ADMIN"),
+    USER("USER"),
+    PHOTOGRAPHER("PHOTOGRAPHER");
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID", updatable = false, nullable = false)
-    private Long id;
+    private final String vale;
 
-    @Enumerated(EnumType.STRING)
-    @Column(unique = true, nullable = false)
-    private RoleEnum name;
-
-    @Transient // Добавляем это, чтобы отключить автоматическое создание связей
-    private Set<User> users;
+    @Override
+    public String getAuthority() {
+        return vale;
+    }
 
 }

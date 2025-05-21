@@ -1,8 +1,6 @@
 package ru.gb.api;
 
-
 import jakarta.persistence.*;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -12,16 +10,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 @Entity
 @Table(name = "auth_users")
 @Data
 public class User {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank(message = "Имя пользователя не может быть пустым") @Column(name = "username")
-    private String username;
+    private String login;
+
+    private String firstName;
+
+    private String lastName;
 
     @NotBlank(message = "Пароль не может быть пустым") @Column(name = "password") @Size(min = 6)
     private String password;
@@ -51,5 +53,13 @@ public class User {
 
     private void setRole(Role role){
         roles.add( role );
+    }
+
+    public void setUsername(String username) {
+        this.login = username;
+    }
+
+    public String getUsername() {
+        return this.login;
     }
 }

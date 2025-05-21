@@ -26,7 +26,7 @@ public class UserDetailsService implements org.springframework.security.core.use
                 user.getUsername(),
                 user.getPassword(),
                 user.getRoles().stream()
-                        .map( role -> new SimpleGrantedAuthority( role.getName().toString() ))
+                        .map( role -> new SimpleGrantedAuthority( role.toString() ))
                         .collect( Collectors.toList() )
         );
     }

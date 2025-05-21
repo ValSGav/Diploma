@@ -4,7 +4,6 @@ package ru.gb.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.gb.api.Role;
-import ru.gb.api.RoleEnum;
 import ru.gb.api.User;
 import ru.gb.dto.UserRegistrationRequest;
 import ru.gb.repository.UserRepository;
@@ -20,12 +19,11 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RoleService roleService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleService roleService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.roleService = roleService;
+
     }
 
     public User createUser(User user) throws RoleNotFoundException {
@@ -37,7 +35,7 @@ public class UserService {
         }
         user.setPassword( passwordEncoder.encode( user.getPassword() ) );
         HashSet<Role> rolesUser = new HashSet<>();
-        rolesUser.add( roleService.getRoleByName( RoleEnum.ROLE_USER ));
+        rolesUser.add( Role.USER);
         user.setRoles( rolesUser);
 
         return userRepository.save( user );
@@ -49,11 +47,9 @@ public class UserService {
         }
 
         User user = new User();
-        user.setUsername(registrationDto.getUsername());
+        user.setUsername( registrationDto.getUsername());
         user.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
-
-        Role defaultRole = roleService.getRoleByName(RoleEnum.ROLE_USER);
-        user.getRoles().add(defaultRole);
+        user.getRoles().add(Role.USER);
 
         return userRepository.save(user);
     }
@@ -61,6 +57,12 @@ public class UserService {
     public Optional<User> getUserById(Long id) {
         return userRepository.findById( id );
     }
+
+    public Optional<User> getUserByName(String name) {
+        return userRepository.findByUsername( name );
+    }
+
+    public Optional<User> getByLogin(String name){ return userRepository.findByUsername( name );}
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -70,7 +72,7 @@ public class UserService {
         return userRepository.findById( id )
                 .map( user -> {
                     user.setEmail( updatedUser.getEmail() );
-                    user.setUsername( updatedUser.getUsername() );
+                    user.setUsername( updatedUser.getUsername());
                     if ( updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty() ) {
                         user.setPassword( passwordEncoder.encode( updatedUser.getPassword() ) );
                     }
@@ -81,6 +83,7 @@ public class UserService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById( id );
+
     }
 
 }
