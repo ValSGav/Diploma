@@ -1,16 +1,18 @@
 package ru.gb.controller;
 
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.gb.api.FileEntity;
+import ru.gb.dto.FilesResponse;
 import ru.gb.service.FileService;
 
-import org.springframework.core.io.Resource;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/files")
@@ -38,7 +40,7 @@ public class FileController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable Long id) throws MalformedURLException {
+    public ResponseEntity<Resource> downloadFile(@PathVariable("id") Long id) throws MalformedURLException {
         Resource resource = fileService.loadFileAsResource(id);
         if (resource == null) {
             return ResponseEntity.notFound().build();
@@ -47,6 +49,18 @@ public class FileController {
         return ResponseEntity.ok()
                 .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<FilesResponse>> getAllFiles() throws MalformedURLException {
+
+        List<FilesResponse> allFiles = fileService.getAllFileInfo();
+
+        if (allFiles.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok()
+                           .body(allFiles);
     }
 
 }

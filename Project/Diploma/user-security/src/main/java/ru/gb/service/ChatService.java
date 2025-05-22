@@ -1,47 +1,82 @@
 package ru.gb.service;
 
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.gb.dto.ChatMessageDTO;
+import ru.gb.api.Chat;
+import ru.gb.api.Message;
+import ru.gb.api.User;
+import ru.gb.repository.ChatRepository;
+import ru.gb.repository.MessageRepository;
+import ru.gb.repository.UserRepository;
+import ru.gb.userexception.ChatNotFoundException;
+import ru.gb.userexception.UserNotFoundException;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatService {
 
-    private final Path chatStoragePath = Paths.get("chat_messages").toAbsolutePath().normalize();
+    @Autowired
+    private ChatRepository chatRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private MessageRepository messageRepository;
 
-    public ChatService() throws IOException {
-        Files.createDirectories(chatStoragePath);
-    }
 
-    public synchronized void saveMessage(ChatMessageDTO message) {
-        try {
-            Path filePath = chatStoragePath.resolve("chat_" + message.getChatId() + ".json");
-            List<ChatMessageDTO> messages;
 
-            if (Files.exists(filePath)) {
-                String content = Files.readString(filePath);
-                messages = new ObjectMapper().readValue(content,
-                        new TypeReference<List<ChatMessageDTO>>(){});
-            } else {
-                messages = new ArrayList<>();
+    public Chat createChat(Set<Long> userIds) throws UserNotFoundException{
+        Chat chat = new Chat();
+        userIds.forEach(userId -> {
+            User user = null;
+            try {
+                user = userRepository.findById(userId)
+                        .orElseThrow(() -> new UserNotFoundException(userId));
+            } catch (UserNotFoundException e) {
+                throw new RuntimeException( e );
             }
 
-            messages.add(message);
+            chat.getParticipants().add(user);
+        });
+        return chatRepository.save(chat);
+    }
 
-            String json = new ObjectMapper().writeValueAsString(messages);
-            Files.writeString(filePath, json, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+    public void addUserToChat(Long chatId, Long userId) throws ChatNotFoundException, UserNotFoundException {
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new ChatNotFoundException(chatId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+        chat.getParticipants().add(user);
+        chatRepository.save(chat);
+    }
+
+    public Message sendMessage(Long chatId, Long senderId, String content) throws ChatNotFoundException, UserNotFoundException {
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new ChatNotFoundException(chatId));
+        User sender = userRepository.findById(senderId)
+                .orElseThrow(() -> new UserNotFoundException(senderId));
+        Message message = new Message(sender, chat, content);
+        return messageRepository.save(message);
+    }
+
+    public List<Message> getAllMessages(Long chatId) throws ChatNotFoundException {
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new ChatNotFoundException(chatId));
+        return chat.getMessages();
+    }
+
+    public List<Message> getLatestMessages(Long chatId, int limit) throws ChatNotFoundException {
+        Chat chat = chatRepository.findById(chatId)
+                .orElseThrow(() -> new ChatNotFoundException(chatId));
+
+        return chat.getMessages()
+                .stream()
+                .sorted( Comparator.comparing(Message::getSentAt).reversed())
+                .limit(limit)
+                .collect( Collectors.toList());
     }
 }

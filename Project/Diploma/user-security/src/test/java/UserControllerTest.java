@@ -7,7 +7,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.gb.api.Role;
 import ru.gb.controller.UserController;
 import ru.gb.dto.UserRegistrationRequest;
 import ru.gb.service.UserService;
@@ -33,7 +32,7 @@ public class UserControllerTest {
                 "Password123!",
                 "John",
                 "Doe",
-                Role.USER
+                "USER"
         );
 
         mockMvc.perform(post("/api/users/register")

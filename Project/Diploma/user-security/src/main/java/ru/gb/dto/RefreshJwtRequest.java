@@ -1,4 +1,4 @@
-package ru.gb.jwt;
+package ru.gb.dto;
 
 import lombok.Getter;
 import lombok.Setter;

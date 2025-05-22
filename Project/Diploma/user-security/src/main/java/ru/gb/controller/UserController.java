@@ -1,6 +1,5 @@
 package ru.gb.controller;
 
-import jakarta.security.auth.message.AuthException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 import ru.gb.api.User;
-import ru.gb.dto.JwtRequest;
-import ru.gb.dto.JwtResponse;
 import ru.gb.dto.UserRegistrationRequest;
 import ru.gb.jwt.JwtUtils;
 import ru.gb.service.AuthService;
@@ -24,7 +21,6 @@ import java.util.NoSuchElementException;
 
 
 @RestController
-//@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -43,14 +39,8 @@ public class UserController {
         return ResponseEntity.ok(userService.registerUser(user));
     }
 
-    @PostMapping("/api/auth/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest authRequest) throws AuthException {
-        final JwtResponse token = authService.login(authRequest);
-        return ResponseEntity.ok(token);
-    }
-
     @GetMapping("/api/users/{id}")
-    public ResponseEntity<?> getUser(@PathVariable long id) {
+    public ResponseEntity<?> getUser(@PathVariable("id") Long id) {
         User user = userService.getUserById( id ).orElse( null );
         if ( user != null )
             return ResponseEntity.ok( user );
@@ -63,7 +53,7 @@ public class UserController {
     }
 
     @PutMapping("/api/users/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody User user) {
+    public ResponseEntity<?> updateUser(@PathVariable("id") Long id, @Valid @RequestBody User user) {
         try {
             User updatedUser = userService.updateUser( id, user );
             return ResponseEntity.ok( updatedUser );
@@ -73,7 +63,7 @@ public class UserController {
     }
 
     @DeleteMapping("/api/users/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser( id );
         return ResponseEntity.noContent().build();
     }

@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import ru.gb.api.FileEntity;
 import ru.gb.api.User;
+import ru.gb.dto.FilesResponse;
 import ru.gb.repository.FileRepository;
 import ru.gb.repository.UserRepository;
 
@@ -18,6 +19,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class FileService {
@@ -58,5 +61,20 @@ public class FileService {
             return resource;
         }
         return null;
+    }
+
+    public List<FilesResponse> getAllFileInfo(){
+        List<FilesResponse> allFiles = new ArrayList<>();
+
+        for (FileEntity file: fileRepository.findAll()) {
+            FilesResponse filesResponse = new FilesResponse();
+            filesResponse.setFilename( file.getFilename() );
+            filesResponse.setFilepath( file.getFilepath() );
+            filesResponse.setOwner( file.getOwner().toString());
+            filesResponse.setUrl( file.getUrl() );
+            allFiles.add( filesResponse );
+        }
+
+        return allFiles;
     }
 }

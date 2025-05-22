@@ -6,4 +6,5 @@ import ru.gb.api.FileEntity;
 
 @Repository
 public interface FileRepository extends JpaRepository<FileEntity, Long> {
+
 }

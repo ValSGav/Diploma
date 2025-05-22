@@ -5,11 +5,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.gb.dto.JwtRequest;
 import ru.gb.dto.JwtResponse;
-import ru.gb.jwt.RefreshJwtRequest;
+import ru.gb.dto.RefreshJwtRequest;
 import ru.gb.service.AuthService;
 
 @RestController
@@ -19,7 +18,11 @@ public class AuthController {
 
     private final AuthService authService;
 
-
+    @PostMapping("/api/auth/login")
+    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest authRequest) throws AuthException {
+        final JwtResponse token = authService.login(authRequest);
+        return ResponseEntity.ok(token);
+    }
 
     @PostMapping("/api/auth/token")
     public ResponseEntity<JwtResponse> getNewAccessToken(@RequestBody RefreshJwtRequest request) throws AuthException {
